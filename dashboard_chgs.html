@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Plano de Desenvolvimento Individual Felipe Gomide</title>
+  <style>
+    :root {
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #172b43;
+      background: #f3f6f9;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --navy: #142b45;
+      --red: #c91d40;
+      --teal: #278c91;
+      --blue: #557fa2;
+      --purple: #7966a7;
+      --amber: #bd8230;
+      --muted: #667789;
+      --line: #e2e8ee;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; }
+    .page { max-width: 1200px; margin: 0 auto; padding: 34px 28px 28px; }
+    header {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: 300px;
+      padding: 28px;
+      border-radius: 16px;
+      background: #08172b;
+    }
+    header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: url("designer.png") center / cover no-repeat;
+      opacity: .72;
+      pointer-events: none;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(180deg, transparent 20%, rgba(8, 23, 43, .65) 55%, #08172b 100%);
+      pointer-events: none;
+    }
+    header h1 { color: #fff; white-space: pre-line; }
+    header .eyebrow { color: #ff9cb0; }
+    header .subtitle { color: #dae5ef; }
+    header .local-badge { align-self: flex-start; }
+    .eyebrow { margin: 0 0 10px; color: var(--red); font-size: 12px; font-weight: 750; letter-spacing: .11em; text-transform: uppercase; }
+    h1 { margin: 0; color: var(--navy); font-size: clamp(26px, 3.4vw, 38px); line-height: 1.14; letter-spacing: -.035em; }
+    .subtitle { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+    .local-badge { flex: 0 0 auto; padding: 9px 12px; border: 1px solid #d7e9df; border-radius: 999px; background: #edf7f1; color: #286447; font-size: 12px; font-weight: 700; }
+    .controls { display: flex; flex-wrap: wrap; align-items: end; gap: 14px; margin: 27px 0 18px; padding: 17px; border: 1px solid var(--line); border-radius: 13px; background: var(--card); }
+    .control { display: grid; gap: 7px; }
+    .control > label, .control-label { color: #405267; font-size: 12px; font-weight: 700; }
+    input[type="date"], .category-summary { min-height: 39px; border: 1px solid #ccd6e0; border-radius: 8px; background: white; color: #24394f; font: inherit; font-size: 13px; }
+    input[type="date"] { padding: 8px 10px; }
+    .category-picker { position: relative; min-width: 230px; }
+    .category-summary { display: flex; min-width: 230px; align-items: center; justify-content: space-between; gap: 18px; padding: 8px 11px; cursor: pointer; list-style: none; }
+    .category-summary::-webkit-details-marker { display: none; }
+    .category-summary::after { content: "▾"; color: var(--muted); }
+    .category-picker[open] .category-summary { border-color: #829ab1; }
+    .category-options { position: absolute; z-index: 5; top: calc(100% + 5px); left: 0; width: 100%; padding: 7px; border: 1px solid var(--line); border-radius: 9px; background: white; box-shadow: 0 12px 30px #142b4520; }
+    .category-options label { display: flex; align-items: center; gap: 9px; padding: 9px 7px; border-radius: 6px; color: #24394f; font-size: 13px; cursor: pointer; }
+    .category-options label:hover { background: #f3f6f9; }
+    input[type="checkbox"] { accent-color: var(--red); }
+    .filter-actions { display: flex; align-items: center; gap: 8px; padding-bottom: 1px; }
+    button { min-height: 38px; padding: 8px 13px; border: 1px solid #ccd6e0; border-radius: 8px; background: #fff; color: #263b51; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+    button:hover { border-color: #829ab1; background: #f8fafc; }
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .metric { min-height: 112px; padding: 18px 19px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .metric-label { color: var(--muted); font-size: 12px; font-weight: 650; }
+    .metric-value { margin-top: 7px; color: var(--navy); font-size: 29px; font-weight: 760; letter-spacing: -.03em; }
+    .metric-note { margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .panel { margin-top: 15px; padding: 20px 20px 16px; border: 1px solid var(--line); border-radius: 13px; background: var(--card); }
+    .panel-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 10px; }
+    h2 { margin: 0; color: var(--navy); font-size: 17px; }
+    .chart-summary { color: var(--muted); font-size: 12px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 10px 19px; margin: 15px 0 0; padding: 0; list-style: none; }
+    .legend li { display: inline-flex; align-items: center; gap: 7px; color: #405267; font-size: 12px; font-weight: 650; }
+    .legend-swatch { width: 11px; height: 11px; border-radius: 3px; }
+    .chart-wrap { position: relative; width: 100%; margin-top: 16px; }
+    svg { display: block; width: 100%; height: 340px; overflow: visible; }
+    .tooltip { position: absolute; z-index: 4; display: none; min-width: 155px; padding: 9px 11px; border: 1px solid #d9e1e9; border-radius: 8px; background: #fff; box-shadow: 0 6px 20px #142b4518; color: #24394f; font-size: 12px; line-height: 1.55; pointer-events: none; }
+    .tooltip strong { color: var(--navy); }
+    .empty { display: none; min-height: 245px; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; text-align: center; }
+    .chart-note { margin: 2px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .source-heading { margin: 24px 0 10px; }
+    .jira-table-wrap { margin-top: 15px; overflow-x: auto; }
+    .jira-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+    .jira-table th, .jira-table td { padding: 11px 12px; border-bottom: 1px solid var(--line); }
+    .jira-table th { color: var(--muted); font-size: 12px; }
+    .jira-table td:first-child { white-space: nowrap; font-weight: 700; }
+    .jira-table caption { padding-bottom: 12px; color: var(--muted); text-align: left; font-size: 12px; }
+    .data-note { display: grid; grid-template-columns: 22px 1fr; gap: 10px; margin-top: 14px; padding: 13px 15px; border: 1px solid #eeddbb; border-radius: 10px; background: #fff9ed; color: #604c2b; font-size: 12px; line-height: 1.55; }
+    .data-note .icon { font-size: 16px; }
+    .page-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 23px 0 18px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+    .page-tab[aria-pressed="true"] { border-color: var(--navy); background: var(--navy); color: #fff; }
+    .page-view[hidden] { display: none; }
+    .pdi-section { margin-top: 18px; }
+    .pdi-section > h2 { margin-bottom: 12px; }
+    .pdi-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .pdi-card { padding: 17px 18px; border: 1px solid var(--line); border-radius: 11px; background: var(--card); }
+    .pdi-card h3 { margin: 0; color: var(--navy); font-size: 14px; line-height: 1.4; }
+    .pdi-card p { margin: 8px 0 0; color: #405267; font-size: 13px; line-height: 1.6; }
+    .pdi-card ul { margin: 9px 0 0; padding-left: 19px; color: #405267; font-size: 13px; line-height: 1.65; }
+    .pdi-card li + li { margin-top: 4px; }
+    .pdi-card .metric-value { margin-top: 5px; font-size: 23px; }
+    .pdi-card .metric-note { font-size: 12px; line-height: 1.5; }
+    .pdi-grid.projects { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pdi-card.wide { grid-column: 1 / -1; }
+    .pdi-status { display: inline-block; margin-top: 10px; padding: 5px 9px; border: 1px solid #eeddbb; border-radius: 999px; background: #fff9ed; color: #765622; font-size: 11px; font-weight: 700; }
+    .recognition-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 15px; }
+    .recognition-card { position: relative; padding: 17px 78px 17px 18px; border: 1px solid var(--line); border-left: 3px solid var(--red); border-radius: 11px; background: var(--card); }
+    .recognition-card::after { position: absolute; top: 8px; right: 10px; width: 58px; height: 46px; background: center / contain no-repeat url("data:image/png;base64,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"); content: ""; pointer-events: none; }
+    .recognition-card h3 { margin: 0; padding-right: 8px; color: var(--navy); font-size: 14px; line-height: 1.4; }
+    .recognition-meta { display: flex; flex-wrap: wrap; gap: 7px 10px; align-items: center; margin-top: 8px; color: var(--muted); font-size: 11px; }
+    .recognition-badge { padding: 4px 8px; border-radius: 999px; background: #fff0f2; color: #a71936; font-weight: 700; }
+    .recognition-card blockquote { margin: 12px 0 0; color: #405267; font-size: 13px; line-height: 1.65; }
+    .recognition-card .no-comment { color: var(--muted); font-style: italic; }
+    footer { margin-top: 15px; color: #778696; font-size: 11px; line-height: 1.55; }
+    @media (max-width: 700px) {
+      .page { padding: 23px 15px; }
+      header { display: flex; flex-direction: column-reverse; align-items: stretch; min-height: 300px; padding: 22px 18px; }
+      .local-badge { display: inline-block; margin-top: 15px; }
+      .controls { align-items: stretch; }
+      .control, .category-picker, .category-summary { width: 100%; }
+      .filter-actions { width: 100%; }
+      .cards { grid-template-columns: 1fr; gap: 9px; }
+      .pdi-grid, .pdi-grid.projects { grid-template-columns: 1fr; gap: 9px; }
+      .pdi-card.wide { grid-column: auto; }
+      .recognition-grid { grid-template-columns: 1fr; gap: 9px; }
+      .recognition-card { padding-right: 78px; }
+      .metric { min-height: 88px; padding: 13px 15px; }
+      .metric-value { display: inline-block; margin-right: 8px; font-size: 25px; }
+      .metric-note { display: inline; }
+      .panel { padding: 15px 12px; }
+      svg { height: 280px; }
+    }
+    @media print {
+      body { background: white; }
+      header { min-height: auto; padding: 0; background: white; }
+      header::before, header::after { display: none; }
+      header h1 { color: var(--navy); }
+      header .eyebrow { color: var(--red); }
+      header .subtitle { color: var(--muted); }
+      .page { max-width: none; padding: 12px; }
+      .controls { display: none; }
+      .page-nav { display: none; }
+      .panel, .metric { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <p class="eyebrow" id="page-eyebrow">Desenvolvimento · PDI</p>
+        <h1 id="page-title">Plano de Desenvolvimento Individual
+Felipe Gomide</h1>
+        <p class="subtitle" id="page-subtitle">Perfil, entregas, formação e direcionadores de desenvolvimento</p>
+      </div>
+      <span class="local-badge">● Painel local · sem envio de dados</span>
+    </header>
+
+    <nav class="page-nav" aria-label="Navegação principal">
+      <button class="page-tab" type="button" data-page="pdi" aria-controls="pdi-page" aria-pressed="true">PDI · Felipe Gomide</button>
+      <button class="page-tab" type="button" data-page="changes" aria-controls="changes-page" aria-pressed="false">Demandas entregues</button>
+      <button class="page-tab" type="button" data-page="recognitions" aria-controls="recognitions-page" aria-pressed="false">Reconhecimentos internos</button>
+    </nav>
+
+    <section class="page-view" id="changes-page" hidden>
+    <h2 class="source-heading">ServiceNow · Projetos</h2>
+    <section class="controls" aria-label="Filtros de projetos do ServiceNow">
+      <div class="control">
+        <span class="control-label">Categorias</span>
+        <details class="category-picker" id="category-picker">
+          <summary class="category-summary" id="category-summary">Todas as categorias</summary>
+          <div class="category-options" id="category-options"></div>
+        </details>
+      </div>
+      <div class="control">
+        <label for="date-from">De</label>
+        <input type="date" id="date-from">
+      </div>
+      <div class="control">
+        <label for="date-to">Até</label>
+        <input type="date" id="date-to">
+      </div>
+      <div class="filter-actions">
+        <button type="button" id="select-all">Todas</button>
+        <button type="button" id="reset">Redefinir</button>
+      </div>
+    </section>
+
+    <section class="cards" aria-live="polite">
+      <article class="metric">
+        <div class="metric-label">CHGs únicos no filtro</div>
+        <div class="metric-value" id="unique-count">—</div>
+        <div class="metric-note">sem duplicar CHGs entre categorias</div>
+      </article>
+      <article class="metric">
+        <div class="metric-label">Ocorrências por categoria</div>
+        <div class="metric-value" id="membership-count">—</div>
+        <div class="metric-note">uma CHG pode contar em mais de uma categoria</div>
+      </article>
+      <article class="metric">
+        <div class="metric-label">Pico mensal · CHGs únicas</div>
+        <div class="metric-value" id="peak-count">—</div>
+        <div class="metric-note" id="peak-month">—</div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>ServiceNow · Projetos entregues por mês</h2>
+        <span class="chart-summary" id="chart-summary"></span>
+      </div>
+      <ul class="legend" aria-label="Legenda das categorias">
+        <li><span class="legend-swatch" style="background:#c91d40"></span>Delete</li>
+        <li><span class="legend-swatch" style="background:#278c91"></span>Provisionamento</li>
+        <li><span class="legend-swatch" style="background:#7966a7"></span>Edição</li>
+        <li><span class="legend-swatch" style="background:#bd8230"></span>Validação</li>
+        <li><span class="legend-swatch" style="background:#557fa2"></span>LZ AWS</li>
+      </ul>
+      <div class="chart-wrap" id="chart-wrap">
+        <svg id="chart" viewBox="0 0 1000 360" role="img" aria-label="Gráfico mensal de projetos do ServiceNow entregues por categoria"></svg>
+        <div class="empty" id="empty">Nenhum registro corresponde aos filtros selecionados.</div>
+        <div class="tooltip" id="tooltip"></div>
+      </div>
+      <p class="chart-note">Passe o cursor sobre uma barra para ver o valor do mês. As colunas são empilhadas por categoria; categorias não são exclusivas.</p>
+    </section>
+
+    <aside class="data-note">
+      <span class="icon" aria-hidden="true">ⓘ</span>
+      <div id="data-quality"></div>
+    </aside>
+
+    <footer>
+      Fonte: atendimento_demandas.xlsx · ServiceNow. Foram consideradas apenas categorias solicitadas com status “Encerrado(a)”; registros cancelados e abertos não entram no gráfico.
+      As datas vêm do término planejado mais recente das tarefas ligadas a cada CHG; a planilha não fornece a data real de encerramento.
+      Dados incorporados neste arquivo: o painel funciona localmente e não carrega bibliotecas, fontes ou serviços da internet.
+    </footer>
+
+    <h2 class="source-heading">Jira · Demandas pontuais</h2>
+    <p class="subtitle">Últimos 6 meses, conforme recorte informado · resumo independente dos filtros do ServiceNow</p>
+    <section class="cards" aria-label="Resumo das demandas pontuais do Jira" style="margin-top: 18px">
+      <article class="metric">
+        <div class="metric-label">Demandas entregues · Jira</div>
+        <div class="metric-value" id="jira-delivered-count">—</div>
+        <div class="metric-note">chaves únicas com status Finalizado</div>
+      </article>
+      <article class="metric">
+        <div class="metric-label">Total de demandas · Jira</div>
+        <div class="metric-value" id="jira-total-count">—</div>
+        <div class="metric-note">todos os status da aba Jira</div>
+      </article>
+      <article class="metric">
+        <div class="metric-label">Percentual finalizado · Jira</div>
+        <div class="metric-value" id="jira-completion-rate">—</div>
+        <div class="metric-note">sobre o total, incluindo canceladas e abertas</div>
+      </article>
+    </section>
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>Jira · Demandas pontuais por status</h2>
+        <span class="chart-summary" id="jira-chart-summary"></span>
+      </div>
+      <ul class="legend" id="jira-legend" aria-label="Legenda dos status do Jira"></ul>
+      <div class="chart-wrap">
+        <svg id="jira-chart" viewBox="0 0 1000 360" role="img" aria-label="Quantidade de demandas pontuais do Jira por status"></svg>
+      </div>
+      <p class="chart-note">O gráfico mostra todos os status para contextualizar a base. Apenas demandas com status Finalizado são contabilizadas como entregues.</p>
+    </section>
+    <aside class="data-note">
+      <span class="icon" aria-hidden="true">ⓘ</span>
+      <div><strong>Nota sobre a base Jira:</strong> a aba não contém datas de criação ou conclusão. O recorte dos últimos 6 meses foi informado pelo responsável e não pode ser validado por data na planilha; por isso, não há distribuição mensal. Canceladas e demandas abertas não entram no total de entregas. Os volumes de Jira e ServiceNow são apresentados separadamente, sem presumir ausência de sobreposição entre as fontes.</div>
+    </aside>
+    <section class="panel">
+      <div class="panel-heading">
+        <h2>Jira · Demandas pontuais entregues</h2>
+        <span class="chart-summary" id="jira-list-summary"></span>
+      </div>
+      <div class="jira-table-wrap">
+        <table class="jira-table">
+          <caption>Somente status Finalizado. Resumos preservados como estão na planilha, inclusive textos truncados.</caption>
+          <thead><tr><th scope="col">Demanda</th><th scope="col">Resumo</th><th scope="col">Status</th></tr></thead>
+          <tbody id="jira-delivered-rows"></tbody>
+        </table>
+      </div>
+    </section>
+    <footer>Fonte: atendimento_demandas.xlsx · aba Jira, consultada em 20/10/2026. Tipo dos registros: Sub-Tech Solution. Dados incorporados ao HTML para uso local, sem acesso ao Jira ou envio de dados.</footer>
+    </section>
+
+    <section class="page-view" id="pdi-page">
+      <div class="cards" aria-label="Resumo profissional">
+        <article class="metric">
+          <div class="metric-label">Tempo de empresa</div>
+          <div class="metric-value">4 anos e 10 meses</div>
+          <div class="metric-note">conforme informado no material do PDI</div>
+        </article>
+        <article class="metric">
+          <div class="metric-label">Tempo na função</div>
+          <div class="metric-value">1 ano e 10 meses</div>
+          <div class="metric-note">conforme informado no material do PDI</div>
+        </article>
+        <article class="metric">
+          <div class="metric-label">Atuação</div>
+          <div class="metric-value">Infrastructure Engineer</div>
+          <div class="metric-note">com desenvolvimento em Cloud Engineer em construção</div>
+        </article>
+      </div>
+
+      <section class="panel pdi-section">
+        <div class="panel-heading">
+          <h2>Direcionadores de desenvolvimento</h2>
+          <span class="chart-summary">Metas registradas no PDI</span>
+        </div>
+        <div class="pdi-grid" style="margin-top: 13px">
+          <article class="pdi-card">
+            <h3>Inovação e experiência digital</h3>
+            <p>Contribuir para inovar e melhorar a experiência dos clientes Bradesco com soluções digitais.</p>
+          </article>
+          <article class="pdi-card">
+            <h3>Melhoria contínua</h3>
+            <p>Avaliar e sugerir melhorias para ferramentas técnicas utilizadas no dia a dia.</p>
+          </article>
+          <article class="pdi-card">
+            <h3>Competências técnicas e liderança</h3>
+            <p>Desenvolver competências para ampliar as possibilidades de atuação e alcançar novas oportunidades internas.</p>
+          </article>
+          <article class="pdi-card">
+            <h3>Idioma e repertório profissional</h3>
+            <p>Aprimorar o inglês e buscar conhecimento em workshops e eventos internacionais.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel pdi-section">
+        <div class="panel-heading">
+          <h2>Projetos e entregas em destaque</h2>
+          <span class="chart-summary">Experiência em Azure e AWS</span>
+        </div>
+        <div class="pdi-grid projects" style="margin-top: 13px">
+          <article class="pdi-card">
+            <h3>Mobile PF · Infra Azure <span class="chart-summary">2023–2024</span></h3>
+            <p>Criação da infraestrutura base dos ambientes Mobile PF, incluindo Home, GACB, Login, Saldo/Extrato e Sessão e Convivência.</p>
+          </article>
+          <article class="pdi-card">
+            <h3>Pavimentação de domínios · Azure <span class="chart-summary">2023–2024</span></h3>
+            <p>Atuação nos domínios PlatCan, PlatTec e PlatFun.</p>
+          </article>
+          <article class="pdi-card">
+            <h3>SAP 4HANA · AWS <span class="chart-summary">2022–2023</span></h3>
+            <p>Participação no projeto SAP 4HANA em ambiente AWS.</p>
+          </article>
+          <article class="pdi-card">
+            <h3>Device Farm iOS · AWS <span class="chart-summary">2025–2026</span></h3>
+            <p>Atuação na esteira de Device Farm para iOS.</p>
+          </article>
+          <article class="pdi-card wide">
+            <h3>Landing Zone · AWS <span class="chart-summary">2025–2026</span></h3>
+            <ul>
+              <li>Assessment com a AWS e times internos.</li>
+              <li>Configuração e padronização de infraestrutura com Terraform e AFT, incluindo repositórios de Account Customization, Global Customization e Account Request.</li>
+              <li>Criação de contas para pavimentação e workloads, esteiras de network customizadas e distribuição de roles e SCPs via Terraform.</li>
+              <li>Atualização do AWS Control Tower e criação de recursos fundacionais: DNS zone, VM AD, bucket para logs centralizados e alertas de monitoramento via CloudWatch.</li>
+            </ul>
+          </article>
+          <article class="pdi-card">
+            <h3>Bradesco Energia · AWS <span class="chart-summary">2025</span></h3>
+            <p>Prospecção de preços de energia para o Bradesco Energia.</p>
+          </article>
+          <article class="pdi-card">
+            <h3>Projeto em andamento</h3>
+            <p>CIAM · Azure.</p>
+            <span class="pdi-status">Em andamento</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel pdi-section">
+        <div class="panel-heading">
+          <h2>Formação e certificações</h2>
+          <span class="chart-summary">6 certificações oficiais informadas</span>
+        </div>
+        <div class="pdi-grid" style="margin-top: 13px">
+          <article class="pdi-card">
+            <h3>Azure</h3>
+            <ul>
+              <li>Microsoft Certified: Azure Fundamentals</li>
+              <li>Microsoft Certified: Azure Administrator Associate</li>
+            </ul>
+          </article>
+          <article class="pdi-card">
+            <h3>AWS</h3>
+            <ul>
+              <li>AWS Certified: Cloud Practitioner</li>
+              <li>AWS Certified: Solutions Architect</li>
+            </ul>
+          </article>
+          <article class="pdi-card">
+            <h3>Outras certificações</h3>
+            <ul>
+              <li>ITIL v3 Foundation</li>
+              <li>ISO/IEC 20.000</li>
+            </ul>
+          </article>
+          <article class="pdi-card">
+            <h3>Graduação</h3>
+            <p>Redes de Computadores · 2019.</p>
+          </article>
+        </div>
+      </section>
+
+      <footer>
+        Fonte: PDI -Felipe Gomide.pptx. Informações e períodos reproduzidos conforme apresentados no material.
+      </footer>
+    </section>
+
+    <section class="page-view" id="recognitions-page" hidden>
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Reconhecimentos de colegas</h2>
+          <span class="chart-summary">15 registros compartilhados no perfil interno</span>
+        </div>
+        <p class="chart-note" style="margin-top: 8px">Mensagens reproduzidas dos prints enviados. Datas e nomes foram mantidos conforme aparecem nas capturas.</p>
+        <div class="recognition-grid">
+          <article class="recognition-card">
+            <h3>Leonardo Gonçalves do Carmo</h3>
+            <div class="recognition-meta"><span class="recognition-badge">#UnidosEvoluímos</span><time datetime="2026-09-25">25/09/2026</time></div>
+            <blockquote>“O Felipe é um profissional que realiza entregas com excelência e transparência. Por mais profissionais como este no banco. Muito obrigado pelo apoio e entrega de 6 VMs na AWS do projeto ‘Rearquitetura de DNS - Migração de DNS (Windows) para o Infoblox’. Pois, nos permitirá avançar para o passo da migração do serviço em questão.”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Bruno Nascimento de Souza</h3>
+            <div class="recognition-meta"><span class="recognition-badge">#XáComigo!</span><time datetime="2026-08-11">11/08/2026</time></div>
+            <blockquote>“Felipe é extremamente engajado com grande conhecimento técnico e tem somado muito no projeto da AWS 45/45.”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Alex de Souza Silva</h3>
+            <div class="recognition-meta"><span class="recognition-badge">#XáComigo!</span><time datetime="2026-07-29">29/07/2026</time></div>
+            <blockquote>“Passando para agradecer por todo apoio prestado à squad de mobile, sempre prestativo e eficiente com as demandas executadas. Tmj.”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Paulo Henrique de Sousa</h3>
+            <div class="recognition-meta"><span class="recognition-badge">#XáComigo!</span><time datetime="2026-02-13">13/02/2026</time></div>
+            <blockquote>“Gomide, queria aproveitar pra te agradecer pela força nessa frente de Tags na AWS. Sua atuação via AFT foi muito importante para manter tudo dentro do padrão, seu conhecimento técnico e disposição para colaborar fizeram toda a diferença para que conseguíssemos avançar com qualidade e agilidade nesta frente! Obrigado pelo apoio!”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Anderson Garcia</h3>
+            <div class="recognition-meta"><span class="recognition-badge">#XáComigo!</span><time datetime="2025-11-05">05/11/2025</time></div>
+            <blockquote>“Quero registrar aqui o apoio e disponibilidade do Felipe no nosso atendimento. Entendeu nossa necessidade e urgência na demanda e conseguiu nos auxiliar rapidamente indo além de sua responsabilidade! Muito obrigado pelo apoio!”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Wender Deptulski Hequer</h3>
+            <div class="recognition-meta"><span class="recognition-badge">#XáComigo!</span><time datetime="2025-10-30">30/10/2025</time></div>
+            <blockquote class="no-comment">A captura registra a medalha, mas não exibe comentário.</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Lilian Akemi Nagata</h3>
+            <div class="recognition-meta"><span class="recognition-badge">Parceria Top</span><time datetime="2024-10-31">31/10/2024</time></div>
+            <blockquote>“Felipe é um excelente profissional, muito prestativo está sempre disposto a ajudar no que for preciso. Obrigada pela parceria!”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Fabio Cristiano Braga de Oliveira</h3>
+            <div class="recognition-meta"><span class="recognition-badge">Protagonista</span><time datetime="2024-08-01">01/08/2024</time></div>
+            <blockquote>“Gomide superou as expectativas e entregou a Validação de Automação do Web Pub Sub com muita competência na 2º Sprint da RT3.”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Hugo Balmiza dos Santos</h3>
+            <div class="recognition-meta"><span class="recognition-badge">#XáComigo!</span><time datetime="2024-04-04">04/04/2024</time></div>
+            <blockquote>“O Gomide é um profissional muito prestativo, que sempre está disposto a ajudar e melhorar os processos, possui bons conhecimentos de cloud computing e não tem receio em aceitar novos desafios. Muito obrigado pela parceria!”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Ana Carolina Moraes da Silva</h3>
+            <div class="recognition-meta"><span class="recognition-badge">Parceria Top</span><time datetime="2024-03-21">21/03/2024</time></div>
+            <blockquote>“Felipe é um profissional excelente! Sempre disponível, nos apoiando, tirando dúvidas, e contribuindo para o sucesso dos projetos. Muito bom poder contar com ele.”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Luciano Dias da Silva</h3>
+            <div class="recognition-meta"><span class="recognition-badge">Parceria Top</span><time datetime="2024-01-26">26/01/2024</time></div>
+            <blockquote class="no-comment">A captura registra a medalha, mas não exibe comentário.</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Pedro Ignacio Rufo da Silva</h3>
+            <div class="recognition-meta"><span class="recognition-badge">#XáComigo!</span><time datetime="2024-01-10">10/01/2024</time></div>
+            <blockquote>“Felipe é um excelente engenheiro, contribui muito para o sucesso dos projetos em que participa, sempre atuando com excelência.”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Sandro Gomes Pereira</h3>
+            <div class="recognition-meta"><span class="recognition-badge">#XáComigo!</span><time datetime="2023-12-07">07/12/2023</time></div>
+            <blockquote>“Excelente profissional.”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Luiz Henrique Rosa Pulheis</h3>
+            <div class="recognition-meta"><span class="recognition-badge">Parceria Top</span><time datetime="2023-07-12">12/07/2023</time></div>
+            <blockquote>“Parabéns pela sua dedicação e comprometimento no projeto de modernização do mobile! Sua persistência e empenho tem sido fundamentais para o avanço do projeto. Obrigado pela parceria!”</blockquote>
+          </article>
+          <article class="recognition-card">
+            <h3>Bruno Rodrigues de Sena</h3>
+            <div class="recognition-meta"><span class="recognition-badge">#XáComigo!</span><time datetime="2022-06-07">07/06/2022</time></div>
+            <blockquote>“Valeu Felipe! Sua dedicação em ajudar a todos faz a diferença no nosso dia a dia! Obrigado pela parceria!”</blockquote>
+          </article>
+        </div>
+      </section>
+      <footer>Fonte: capturas de tela do perfil de feedback interno enviadas pelo colaborador. Registros de metas concluídas não foram incluídos nesta aba, que reúne reconhecimentos concedidos por colegas.</footer>
+    </section>
+  </main>
+
+  <script>
+    "use strict";
+    const DATA = [{"key":"change-1","date":null,"categories":["DELETE"]},{"key":"change-2","date":"2025-10-06","categories":["VALIDAÇÃO"]},{"key":"change-3","date":"2025-10-06","categories":["VALIDAÇÃO"]},{"key":"change-4","date":"2025-10-14","categories":["LZ AWS"]},{"key":"change-5","date":"2025-10-27","categories":["EDIÇÃO","VALIDAÇÃO"]},{"key":"change-6","date":"2025-10-29","categories":["LZ AWS"]},{"key":"change-7","date":"2025-11-05","categories":["LZ AWS"]},{"key":"change-8","date":"2025-10-31","categories":["LZ AWS"]},{"key":"change-9","date":"2025-10-31","categories":["LZ AWS"]},{"key":"change-10","date":"2025-11-04","categories":["LZ AWS"]},{"key":"change-11","date":"2025-11-04","categories":["LZ AWS"]},{"key":"change-12","date":"2025-11-05","categories":["LZ AWS"]},{"key":"change-13","date":"2025-11-05","categories":["PROVISIONAMENTO"]},{"key":"change-14","date":"2025-11-06","categories":["LZ AWS"]},{"key":"change-15","date":"2025-11-10","categories":["LZ AWS"]},{"key":"change-16","date":"2025-11-11","categories":["LZ AWS"]},{"key":"change-17","date":"2025-11-12","categories":["VALIDAÇÃO"]},{"key":"change-18","date":"2025-11-13","categories":["LZ AWS"]},{"key":"change-19","date":"2025-11-14","categories":["LZ AWS"]},{"key":"change-20","date":"2025-11-18","categories":["LZ AWS"]},{"key":"change-21","date":"2025-11-22","categories":["LZ AWS"]},{"key":"change-22","date":"2025-11-21","categories":["LZ AWS"]},{"key":"change-23","date":"2025-11-21","categories":["LZ AWS"]},{"key":"change-24","date":"2025-11-24","categories":["LZ AWS"]},{"key":"change-25","date":"2025-11-25","categories":["LZ AWS"]},{"key":"change-26","date":"2025-11-25","categories":["LZ AWS"]},{"key":"change-27","date":"2025-12-08","categories":["LZ AWS"]},{"key":"change-28","date":"2026-01-16","categories":["LZ AWS"]},{"key":"change-29","date":"2026-01-23","categories":["LZ AWS"]},{"key":"change-30","date":"2026-01-22","categories":["LZ AWS"]},{"key":"change-31","date":"2026-01-14","categories":["LZ AWS"]},{"key":"change-32","date":"2026-01-23","categories":["LZ AWS"]},{"key":"change-33","date":"2026-01-16","categories":["LZ AWS"]},{"key":"change-34","date":"2026-01-23","categories":["LZ AWS"]},{"key":"change-35","date":"2026-01-20","categories":["LZ AWS"]},{"key":"change-36","date":"2026-01-27","categories":["LZ AWS"]},{"key":"change-37","date":"2026-01-21","categories":["LZ AWS"]},{"key":"change-38","date":"2026-01-30","categories":["VALIDAÇÃO"]},{"key":"change-39","date":"2026-01-29","categories":["LZ AWS"]},{"key":"change-40","date":"2026-02-12","categories":["LZ AWS"]},{"key":"change-41","date":"2026-02-09","categories":["LZ AWS"]},{"key":"change-42","date":"2026-02-12","categories":["LZ AWS"]},{"key":"change-43","date":"2026-02-12","categories":["LZ AWS"]},{"key":"change-44","date":"2026-02-26","categories":["LZ AWS"]},{"key":"change-45","date":"2026-02-25","categories":["LZ AWS"]},{"key":"change-46","date":"2026-03-04","categories":["LZ AWS"]},{"key":"change-47","date":"2026-03-04","categories":["LZ AWS"]},{"key":"change-48","date":"2026-03-12","categories":["LZ AWS"]},{"key":"change-49","date":"2026-03-13","categories":["LZ AWS"]},{"key":"change-50","date":"2026-03-13","categories":["LZ AWS"]},{"key":"change-51","date":"2026-03-13","categories":["LZ AWS"]},{"key":"change-52","date":"2026-03-10","categories":["LZ AWS"]},{"key":"change-53","date":"2026-03-12","categories":["VALIDAÇÃO"]},{"key":"change-54","date":"2026-03-17","categories":["LZ AWS"]},{"key":"change-55","date":"2026-03-17","categories":["LZ AWS"]},{"key":"change-56","date":"2026-03-26","categories":["LZ AWS"]},{"key":"change-57","date":"2026-04-25","categories":["VALIDAÇÃO"]},{"key":"change-58","date":"2026-03-27","categories":["LZ AWS"]},{"key":"change-59","date":"2026-03-27","categories":["LZ AWS"]},{"key":"change-60","date":"2026-04-24","categories":["LZ AWS"]},{"key":"change-61","date":"2026-04-16","categories":["PROVISIONAMENTO"]},{"key":"change-62","date":"2026-04-25","categories":["LZ AWS"]},{"key":"change-63","date":"2026-04-30","categories":["LZ AWS"]},{"key":"change-64","date":"2026-06-02","categories":["DELETE"]},{"key":"change-65","date":null,"categories":["DELETE"]},{"key":"change-66","date":"2026-06-03","categories":["DELETE","LZ AWS"]},{"key":"change-67","date":"2026-06-08","categories":["PROVISIONAMENTO"]},{"key":"change-68","date":"2026-06-02","categories":["DELETE"]},{"key":"change-69","date":"2026-06-09","categories":["VALIDAÇÃO"]},{"key":"change-70","date":"2026-06-09","categories":["PROVISIONAMENTO"]},{"key":"change-71","date":"2026-06-09","categories":["PROVISIONAMENTO"]},{"key":"change-72","date":"2026-06-18","categories":["PROVISIONAMENTO"]},{"key":"change-73","date":"2026-06-18","categories":["PROVISIONAMENTO"]},{"key":"change-74","date":"2026-06-11","categories":["PROVISIONAMENTO"]},{"key":"change-75","date":"2026-06-12","categories":["DELETE"]},{"key":"change-76","date":"2026-06-12","categories":["DELETE"]},{"key":"change-77","date":"2026-06-12","categories":["DELETE"]},{"key":"change-78","date":"2026-06-12","categories":["DELETE"]},{"key":"change-79","date":null,"categories":["DELETE"]},{"key":"change-80","date":"2026-06-12","categories":["PROVISIONAMENTO"]},{"key":"change-81","date":"2026-06-18","categories":["DELETE"]},{"key":"change-82","date":"2026-06-17","categories":["DELETE"]},{"key":"change-83","date":"2026-07-16","categories":["EDIÇÃO"]},{"key":"change-84","date":"2026-07-06","categories":["PROVISIONAMENTO"]},{"key":"change-85","date":"2026-06-18","categories":["DELETE"]},{"key":"change-86","date":"2026-06-22","categories":["PROVISIONAMENTO"]},{"key":"change-87","date":null,"categories":["DELETE"]},{"key":"change-88","date":"2026-06-22","categories":["DELETE"]},{"key":"change-89","date":"2026-06-22","categories":["DELETE"]},{"key":"change-90","date":"2026-07-02","categories":["PROVISIONAMENTO"]},{"key":"change-91","date":"2026-06-25","categories":["EDIÇÃO"]},{"key":"change-92","date":"2026-06-25","categories":["DELETE"]},{"key":"change-93","date":"2026-07-02","categories":["VALIDAÇÃO"]},{"key":"change-94","date":"2026-07-03","categories":["VALIDAÇÃO"]},{"key":"change-95","date":"2026-07-15","categories":["DELETE","EDIÇÃO"]},{"key":"change-96","date":"2026-06-26","categories":["DELETE"]},{"key":"change-97","date":"2026-07-03","categories":["PROVISIONAMENTO"]},{"key":"change-98","date":"2026-07-01","categories":["DELETE"]},{"key":"change-99","date":"2026-07-01","categories":["DELETE"]},{"key":"change-100","date":"2026-07-02","categories":["EDIÇÃO"]},{"key":"change-101","date":"2026-07-02","categories":["DELETE"]},{"key":"change-102","date":"2026-07-02","categories":["DELETE"]},{"key":"change-103","date":"2026-07-02","categories":["DELETE"]},{"key":"change-104","date":"2026-07-02","categories":["DELETE"]},{"key":"change-105","date":"2026-07-07","categories":["DELETE"]},{"key":"change-106","date":"2026-07-07","categories":["DELETE"]},{"key":"change-107","date":"2026-07-16","categories":["LZ AWS","VALIDAÇÃO"]},{"key":"change-108","date":"2026-07-07","categories":["DELETE"]},{"key":"change-109","date":null,"categories":["DELETE"]},{"key":"change-110","date":"2026-07-07","categories":["DELETE"]},{"key":"change-111","date":"2026-07-22","categories":["PROVISIONAMENTO"]},{"key":"change-112","date":"2026-07-24","categories":["PROVISIONAMENTO"]},{"key":"change-113","date":"2026-07-16","categories":["EDIÇÃO","VALIDAÇÃO"]},{"key":"change-114","date":"2026-07-17","categories":["VALIDAÇÃO"]},{"key":"change-115","date":"2026-07-14","categories":["DELETE"]},{"key":"change-116","date":"2026-07-17","categories":["VALIDAÇÃO"]},{"key":"change-117","date":"2026-07-22","categories":["DELETE","VALIDAÇÃO"]},{"key":"change-118","date":"2026-07-27","categories":["PROVISIONAMENTO"]},{"key":"change-119","date":"2026-07-30","categories":["DELETE"]},{"key":"change-120","date":"2026-07-30","categories":["DELETE"]},{"key":"change-121","date":"2026-07-30","categories":["DELETE"]},{"key":"change-122","date":"2026-07-30","categories":["DELETE"]},{"key":"change-123","date":"2026-07-29","categories":["DELETE"]},{"key":"change-124","date":"2026-07-30","categories":["DELETE"]},{"key":"change-125","date":null,"categories":["DELETE"]},{"key":"change-126","date":"2026-08-14","categories":["VALIDAÇÃO"]},{"key":"change-127","date":"2026-08-07","categories":["DELETE"]},{"key":"change-128","date":"2026-08-07","categories":["DELETE"]},{"key":"change-129","date":null,"categories":["DELETE"]},{"key":"change-130","date":"2026-09-04","categories":["PROVISIONAMENTO"]},{"key":"change-131","date":"2026-08-06","categories":["PROVISIONAMENTO"]},{"key":"change-132","date":"2026-08-06","categories":["PROVISIONAMENTO"]},{"key":"change-133","date":null,"categories":["DELETE"]},{"key":"change-134","date":"2026-08-05","categories":["DELETE"]},{"key":"change-135","date":"2026-08-10","categories":["PROVISIONAMENTO"]},{"key":"change-136","date":"2026-08-07","categories":["DELETE","VALIDAÇÃO"]},{"key":"change-137","date":"2026-08-11","categories":["DELETE","PROVISIONAMENTO"]},{"key":"change-138","date":"2026-08-22","categories":["EDIÇÃO","VALIDAÇÃO"]},{"key":"change-139","date":"2026-08-22","categories":["DELETE","VALIDAÇÃO"]},{"key":"change-140","date":"2026-08-20","categories":["DELETE"]},{"key":"change-141","date":"2026-08-28","categories":["VALIDAÇÃO"]},{"key":"change-142","date":"2026-08-26","categories":["DELETE"]},{"key":"change-143","date":"2026-08-27","categories":["DELETE"]},{"key":"change-144","date":"2026-09-23","categories":["DELETE"]},{"key":"change-145","date":"2026-08-28","categories":["DELETE"]},{"key":"change-146","date":null,"categories":["DELETE"]},{"key":"change-147","date":"2026-08-22","categories":["DELETE"]},{"key":"change-148","date":null,"categories":["VALIDAÇÃO"]},{"key":"change-149","date":null,"categories":["VALIDAÇÃO"]},{"key":"change-150","date":"2026-09-25","categories":["PROVISIONAMENTO"]},{"key":"change-151","date":null,"categories":["EDIÇÃO"]},{"key":"change-152","date":"2026-09-16","categories":["DELETE"]},{"key":"change-153","date":"2026-09-10","categories":["DELETE"]},{"key":"change-154","date":"2026-09-11","categories":["DELETE"]},{"key":"change-155","date":null,"categories":["DELETE"]},{"key":"change-156","date":"2026-09-09","categories":["DELETE","EDIÇÃO"]},{"key":"change-157","date":"2026-09-11","categories":["DELETE"]},{"key":"change-158","date":"2026-09-16","categories":["PROVISIONAMENTO"]},{"key":"change-159","date":null,"categories":["DELETE"]},{"key":"change-160","date":"2026-09-15","categories":["DELETE"]},{"key":"change-161","date":"2026-09-16","categories":["EDIÇÃO"]},{"key":"change-162","date":"2026-09-16","categories":["DELETE","EDIÇÃO"]},{"key":"change-163","date":"2026-09-16","categories":["EDIÇÃO"]},{"key":"change-164","date":"2026-09-16","categories":["EDIÇÃO"]},{"key":"change-165","date":"2026-09-17","categories":["DELETE"]},{"key":"change-166","date":null,"categories":["DELETE"]},{"key":"change-167","date":"2026-09-17","categories":["DELETE"]},{"key":"change-168","date":"2026-09-24","categories":["DELETE","VALIDAÇÃO"]},{"key":"change-169","date":null,"categories":["DELETE"]},{"key":"change-170","date":"2026-09-28","categories":["DELETE"]},{"key":"change-171","date":null,"categories":["DELETE"]},{"key":"change-172","date":"2026-10-06","categories":["PROVISIONAMENTO"]},{"key":"change-173","date":"2026-10-06","categories":["PROVISIONAMENTO"]},{"key":"change-174","date":null,"categories":["DELETE"]}];
+    const CATEGORIES = ["DELETE", "PROVISIONAMENTO", "EDIÇÃO", "VALIDAÇÃO", "LZ AWS"];
+    const COLORS = {
+      "DELETE": "#c91d40",
+      "PROVISIONAMENTO": "#278c91",
+      "EDIÇÃO": "#7966a7",
+      "VALIDAÇÃO": "#bd8230",
+      "LZ AWS": "#557fa2"
+    };
+    const JIRA_DATA = [
+      { key: "COECS-379", summary: "Revisão e melhoria da documentação de...", status: "Finalizado" },
+      { key: "COECS-386", summary: "AWS - Limpeza das imagens não utiliza...", status: "Finalizado" },
+      { key: "COECS-387", summary: "Realizar o scan e data mapping nas ba...", status: "Finalizado" },
+      { key: "COECS-456", summary: "[CIAM] - Criação de pools backend par...", status: "Finalizado" },
+      { key: "COECS-459", summary: "[CIAM] - Criação de um Storage Accoun...", status: "Finalizado" },
+      { key: "COECS-460", summary: "Realizar o retagueamento (atualização...", status: "Finalizado" },
+      { key: "COECS-463", summary: "[AWS] - Distribuir a carga entre múlt...", status: "Finalizado" },
+      { key: "COECS-473", summary: "[AWS] Ajuste de política de endpoints...", status: "Finalizado" },
+      { key: "COECS-481", summary: "[CIAM] - Programar desligamento autom...", status: "Finalizado" },
+      { key: "COECS-483", summary: "[CIAM] - Abrir CHG para exclusão de APIM", status: "Finalizado" },
+      { key: "COECS-488", summary: "[CIAM] - Configurar Kafka Hom (privat...", status: "Finalizado" },
+      { key: "COECS-489", summary: "[CIAM] - Instalar e configurar VMSS e...", status: "Finalizado" },
+      { key: "COECS-490", summary: "[CIAM] - Configurar Kafka Dev (privat...", status: "Finalizado" },
+      { key: "COECS-498", summary: "[CIAM] - Delete WorkSpace VM HO vmazu...", status: "Finalizado" },
+      { key: "COECS-499", summary: "[CIAM] - Levantamento IPs de LB e App...", status: "Finalizado" },
+      { key: "COECS-500", summary: "Alterar tier de Azure Notification Hu...", status: "Finalizado" },
+      { key: "COECS-547", summary: "Destruir VM teste AWS - 2607031947227...", status: "Finalizado" },
+      { key: "COECS-559", summary: "Criar novo instance profile para VM v...", status: "Finalizado" },
+      { key: "COECS-560", summary: "[AWS] - Upload de código fonte AWS li...", status: "Finalizado" },
+      { key: "COECS-598", summary: "[CIAM] - Criar StorageAccount com Fil...", status: "Finalizado" },
+      { key: "COECS-611", summary: "[E-AGRO] - Criação de DMS Endpoint So...", status: "Finalizado" },
+      { key: "COECS-658", summary: "[E-AGRO] - Excluir DMS instance repli...", status: "Finalizado" },
+      { key: "COECS-660", summary: "[E-AGRO] - Criação de DMS Endpoint Ta...", status: "Finalizado" },
+      { key: "COECS-661", summary: "[E-AGRO] -Restart Aurora RDS EAGRO HO", status: "Finalizado" },
+      { key: "COECS-662", summary: "[E-AGRO] - Create 13 DMS Endpoint tar...", status: "Cancelada" },
+      { key: "COECS-663", summary: "[E-AGRO] - Alterar sg VMs cassandra E...", status: "Finalizado" },
+      { key: "COECS-664", summary: "[E-AGRO] - Alterar sg VMs cassandra E...", status: "Finalizado" },
+      { key: "COECS-665", summary: "[E-AGRO] - Alterar sg endpoint mongo ...", status: "Finalizado" },
+      { key: "COECS-666", summary: "[CoE] - Atualização de TAG backup par...", status: "Finalizado" },
+      { key: "COECS-698", summary: "[SAP] - Criar 7 PrefixList pra SG da ...", status: "Finalizado" },
+      { key: "COECS-699", summary: "Solicitação de exclusão de workspace ...", status: "Finalizado" },
+      { key: "COECS-700", summary: "Teste de oferta BEX - AWS Account", status: "Finalizado" },
+      { key: "COECS-703", summary: "[CIAM] - Criar VMs PLATAUTH DEV", status: "Finalizado" },
+      { key: "COECS-704", summary: "[CIAM] - Criar 2 storage account para...", status: "Finalizado" },
+      { key: "COECS-705", summary: "[AW] - Adicionar permissão na role LI...", status: "Finalizado" },
+      { key: "COECS-706", summary: "[CIAM] - Alterar parâmetro nos ST acc...", status: "Finalizado" },
+      { key: "COECS-707", summary: "[CIAM] - Criação de pools backend par...", status: "Finalizado" },
+      { key: "COECS-708", summary: "CIAM - Criar 4 fileshares tipo NFS", status: "Finalizado" },
+      { key: "COECS-709", summary: "CIAM - Ajustar VMSS para minimo 3 e m...", status: "Finalizado" },
+      { key: "COECS-740", summary: "[CIAM] - Implementação de Backend Poo...", status: "Finalizado" },
+      { key: "COECS-756", summary: "[CIAM] - Ajustes no load balancer pla...", status: "Em Progresso" },
+      { key: "COECS-757", summary: "[AWS] - Criar nova VPC e novas subnet...", status: "Finalizado" },
+      { key: "COECS-819", summary: "AWS - Inserir VM Infoblox no gride", status: "A Fazer" },
+      { key: "COECS-820", summary: "AWS - Alteração de regras no SG das V...", status: "Finalizado" }
+    ];
+    const INITIAL_FROM = "2025-10-08";
+    const INITIAL_TO = "2026-10-08";
+    const selected = new Set(CATEGORIES);
+    const svg = document.getElementById("chart");
+    const tooltip = document.getElementById("tooltip");
+    const dateFrom = document.getElementById("date-from");
+    const dateTo = document.getElementById("date-to");
+    const number = new Intl.NumberFormat("pt-BR");
+    const monthName = new Intl.DateTimeFormat("pt-BR", { month: "short", year: "2-digit", timeZone: "UTC" });
+
+    function esc(value) {
+      return String(value).replace(/[&<>"']/g, ch => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[ch]);
+    }
+    function monthKey(date) { return date.slice(0, 7); }
+    function monthLabel(key) {
+      const [year, month] = key.split("-").map(Number);
+      return monthName.format(new Date(Date.UTC(year, month - 1, 1))).replace(".", "");
+    }
+    function el(name, attrs = {}) {
+      const node = document.createElementNS("http://www.w3.org/2000/svg", name);
+      for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+      return node;
+    }
+    function renderJira() {
+      const rows = [...new Map(JIRA_DATA.map(row => [row.key, row])).values()];
+      const delivered = rows.filter(row => row.status === "Finalizado");
+      const statuses = [
+        { name: "Finalizado", color: "#278c91" },
+        { name: "Cancelada", color: "#c91d40" },
+        { name: "Em Progresso", color: "#bd8230" },
+        { name: "A Fazer", color: "#557fa2" }
+      ].map(status => ({ ...status, count: rows.filter(row => row.status === status.name).length }));
+      document.getElementById("jira-delivered-count").textContent = number.format(delivered.length);
+      document.getElementById("jira-total-count").textContent = number.format(rows.length);
+      document.getElementById("jira-completion-rate").textContent =
+        new Intl.NumberFormat("pt-BR", { style: "percent", maximumFractionDigits: 1 }).format(delivered.length / rows.length);
+      document.getElementById("jira-chart-summary").textContent =
+        `${number.format(rows.length)} demandas distintas · últimos 6 meses informados`;
+      document.getElementById("jira-list-summary").textContent = `${number.format(delivered.length)} entregas`;
+      document.getElementById("jira-legend").innerHTML = statuses.map(status =>
+        `<li><span class="legend-swatch" style="background:${status.color}"></span>${esc(status.name)}</li>`
+      ).join("");
+      document.getElementById("jira-delivered-rows").innerHTML = delivered.map(row =>
+        `<tr><td>${esc(row.key)}</td><td>${esc(row.summary)}</td><td>${esc(row.status)}</td></tr>`
+      ).join("");
+      const chart = document.getElementById("jira-chart");
+      chart.replaceChildren();
+      const max = Math.max(5, Math.ceil(Math.max(...statuses.map(status => status.count)) / 5) * 5);
+      for (let value = 0; value <= max; value += 5) {
+        const y = 306 - value / max * 270;
+        chart.append(el("line", { x1: 48, y1: y, x2: 988, y2: y, stroke: "#e6ebf0" }));
+        const tick = el("text", { x: 38, y: y + 4, fill: "#738292", "font-size": 11, "text-anchor": "end" });
+        tick.textContent = number.format(value);
+        chart.append(tick);
+      }
+      statuses.forEach((status, index) => {
+        const x = 48 + 235 * index + 117.5;
+        const height = status.count / max * 270;
+        const bar = el("rect", {
+          x: x - 23, y: 306 - height, width: 46, height, rx: 2, fill: status.color,
+          tabindex: 0, "aria-label": `${status.name}: ${number.format(status.count)} demandas`
+        });
+        const title = el("title");
+        title.textContent = `${status.name}: ${number.format(status.count)} demandas`;
+        bar.append(title);
+        const count = el("text", { x, y: 296 - height, fill: "#142b45", "font-size": 13, "font-weight": 700, "text-anchor": "middle" });
+        count.textContent = number.format(status.count);
+        const label = el("text", { x, y: 330, fill: "#667789", "font-size": 12, "text-anchor": "middle" });
+        label.textContent = status.name;
+        chart.append(bar, count, label);
+      });
+    }
+    function makeCategoryMenu() {
+      const options = document.getElementById("category-options");
+      for (const category of CATEGORIES) {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.value = category;
+        input.checked = true;
+        input.addEventListener("change", () => {
+          input.checked ? selected.add(category) : selected.delete(category);
+          render();
+        });
+        label.append(input, document.createTextNode(category));
+        options.append(label);
+      }
+    }
+    function updateCategoryLabel() {
+      const summary = document.getElementById("category-summary");
+      if (selected.size === CATEGORIES.length) summary.textContent = "Todas as categorias";
+      else if (!selected.size) summary.textContent = "Nenhuma categoria";
+      else if (selected.size === 1) summary.textContent = [...selected][0];
+      else summary.textContent = `${selected.size} categorias selecionadas`;
+    }
+    function filteredRows() {
+      const from = dateFrom.value;
+      const to = dateTo.value;
+      return DATA.filter(row => row.date && row.date >= from && row.date <= to &&
+        row.categories.some(category => selected.has(category)));
+    }
+    function drawChart(rows) {
+      svg.replaceChildren();
+      const grouped = new Map();
+      const uniqueByMonth = new Map();
+      for (const row of rows) {
+        const key = monthKey(row.date);
+        if (!grouped.has(key)) grouped.set(key, Object.fromEntries(CATEGORIES.map(category => [category, 0])));
+        uniqueByMonth.set(key, (uniqueByMonth.get(key) || 0) + 1);
+        for (const category of row.categories) {
+          if (selected.has(category)) grouped.get(key)[category]++;
+        }
+      }
+      const from = dateFrom.value;
+      const to = dateTo.value;
+      if (!rows.length || !from || !to || from > to) {
+        svg.style.display = "none";
+        document.getElementById("empty").style.display = "flex";
+        return { grouped, keys: [], peak: 0, peakKey: null, memberships: 0 };
+      }
+      const keys = [];
+      const cursor = new Date(`${monthKey(from)}-01T00:00:00Z`);
+      const lastMonth = monthKey(to);
+      while (cursor.toISOString().slice(0, 7) <= lastMonth) {
+        const key = cursor.toISOString().slice(0, 7);
+        keys.push(key);
+        if (!grouped.has(key)) grouped.set(key, Object.fromEntries(CATEGORIES.map(category => [category, 0])));
+        cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+      }
+      svg.style.display = "block";
+      document.getElementById("empty").style.display = "none";
+      const width = 1000, top = 18, bottom = 306, left = 48, right = 12;
+      const plotHeight = bottom - top, plotWidth = width - left - right;
+      const totals = keys.map(key => [...selected].reduce((sum, category) => sum + grouped.get(key)[category], 0));
+      const uniqueTotals = keys.map(key => uniqueByMonth.get(key) || 0);
+      const peak = Math.max(0, ...uniqueTotals);
+      const peakKey = keys[uniqueTotals.indexOf(peak)];
+      const memberships = totals.reduce((sum, value) => sum + value, 0);
+      const niceMax = Math.max(1, Math.ceil(peak / 5) * 5);
+      const ticks = 4;
+      for (let i = 0; i <= ticks; i++) {
+        const value = niceMax * i / ticks;
+        const y = bottom - (value / niceMax) * plotHeight;
+        svg.append(el("line", { x1: left, y1: y, x2: width - right, y2: y, stroke: "#e6ebf0", "stroke-width": 1 }));
+        const tick = el("text", { x: left - 10, y: y + 4, fill: "#738292", "font-size": 11, "text-anchor": "end" });
+        tick.textContent = number.format(value);
+        svg.append(tick);
+      }
+      const slot = plotWidth / keys.length;
+      const barWidth = Math.min(46, slot * .66);
+      keys.forEach((key, index) => {
+        const x = left + slot * index + (slot - barWidth) / 2;
+        let yBottom = bottom;
+        for (const category of CATEGORIES) {
+          if (!selected.has(category)) continue;
+          const count = grouped.get(key)[category];
+          if (!count) continue;
+          const height = count / niceMax * plotHeight;
+          const rect = el("rect", {
+            x, y: yBottom - height, width: barWidth, height,
+            fill: COLORS[category], rx: 2, tabindex: 0,
+            "aria-label": `${monthLabel(key)}, ${category}: ${number.format(count)}`
+          });
+          const title = el("title");
+          title.textContent = `${monthLabel(key)} · ${category}: ${number.format(count)}`;
+          rect.append(title);
+          rect.addEventListener("pointermove", event => {
+            const wrap = document.getElementById("chart-wrap").getBoundingClientRect();
+            tooltip.innerHTML = `<strong>${esc(monthLabel(key))}</strong><br>${esc(category)}: ${number.format(count)}`;
+            tooltip.style.display = "block";
+            tooltip.style.left = `${Math.min(event.clientX - wrap.left + 12, wrap.width - 175)}px`;
+            tooltip.style.top = `${Math.max(0, event.clientY - wrap.top - 45)}px`;
+          });
+          rect.addEventListener("pointerleave", () => { tooltip.style.display = "none"; });
+          rect.addEventListener("focus", () => {
+            tooltip.innerHTML = `<strong>${esc(monthLabel(key))}</strong><br>${esc(category)}: ${number.format(count)}`;
+            tooltip.style.display = "block";
+            tooltip.style.left = `${Math.max(0, x / width * document.getElementById("chart-wrap").clientWidth)}px`;
+            tooltip.style.top = `${Math.max(0, (yBottom - height) / 360 * 340 - 42)}px`;
+          });
+          rect.addEventListener("blur", () => { tooltip.style.display = "none"; });
+          svg.append(rect);
+          if (height > 21) {
+            const label = el("text", {
+              x: x + barWidth / 2, y: yBottom - height / 2 + 4,
+              fill: "#fff", "font-size": 11, "font-weight": 700, "text-anchor": "middle",
+              "pointer-events": "none"
+            });
+            label.textContent = count;
+            svg.append(label);
+          }
+          yBottom -= height;
+        }
+        const label = el("text", {
+          x: x + barWidth / 2, y: bottom + 24, fill: "#667789",
+          "font-size": keys.length > 10 ? 10 : 11, "text-anchor": "middle"
+        });
+        label.textContent = monthLabel(key);
+        svg.append(label);
+      });
+      return { grouped, keys, peak, peakKey, memberships };
+    }
+    function render() {
+      updateCategoryLabel();
+      const rows = filteredRows();
+      const result = drawChart(rows);
+      document.getElementById("unique-count").textContent = number.format(rows.length);
+      document.getElementById("membership-count").textContent = number.format(result.memberships);
+      document.getElementById("peak-count").textContent = result.peak ? number.format(result.peak) : "—";
+      document.getElementById("peak-month").textContent = result.peakKey ? monthLabel(result.peakKey) : "Sem registros";
+      document.getElementById("chart-summary").textContent =
+        `${number.format(rows.length)} CHGs distintas · ${number.format(result.memberships)} ocorrências nas categorias`;
+    }
+    function setAllCategories() {
+      selected.clear();
+      for (const category of CATEGORIES) selected.add(category);
+      document.querySelectorAll("#category-options input").forEach(input => { input.checked = true; });
+      render();
+    }
+    function reset() {
+      dateFrom.value = INITIAL_FROM;
+      dateTo.value = INITIAL_TO;
+      setAllCategories();
+    }
+    function showDataQuality() {
+      const undated = DATA.filter(row => !row.date).length;
+      const dated = DATA.filter(row => row.date).length;
+      const inPeriod = DATA.filter(row => row.date && row.date >= INITIAL_FROM && row.date <= INITIAL_TO).length;
+      const multiCategory = DATA.filter(row => row.categories.length > 1).length;
+      document.getElementById("data-quality").innerHTML =
+        `<strong>Nota sobre a base:</strong> ${number.format(inPeriod)} CHGs com término planejado no período aparecem no gráfico; ` +
+        `${number.format(multiCategory)} estão associadas a mais de uma categoria. ` +
+        `${number.format(undated)} CHGs encerradas nas categorias selecionadas não têm data planejada associada e não podem ser confirmadas dentro ou fora do período.`;
+    }
+    document.querySelectorAll(".page-tab").forEach(button => {
+      button.addEventListener("click", () => {
+        const page = button.dataset.page;
+        const isPdi = page === "pdi";
+        const isChanges = page === "changes";
+        document.getElementById("changes-page").hidden = !isChanges;
+        document.getElementById("pdi-page").hidden = !isPdi;
+        document.getElementById("recognitions-page").hidden = page !== "recognitions";
+        document.querySelectorAll(".page-tab").forEach(tab => {
+          tab.setAttribute("aria-pressed", String(tab === button));
+        });
+        const pageContent = {
+          pdi: {
+            eyebrow: "Desenvolvimento · PDI",
+            title: "Plano de Desenvolvimento Individual\nFelipe Gomide",
+            subtitle: "Perfil, entregas, formação e direcionadores de desenvolvimento",
+            documentTitle: "Plano de Desenvolvimento Individual Felipe Gomide"
+          },
+          changes: {
+            eyebrow: "Operações · Entregas",
+            title: "Demandas entregues",
+            subtitle: "ServiceNow · Projetos (12 meses) | Jira · Demandas pontuais (6 meses informados)",
+            documentTitle: "Demandas entregues | ServiceNow e Jira"
+          },
+          recognitions: {
+            eyebrow: "Cultura · Colaboração",
+            title: "Reconhecimentos internos",
+            subtitle: "Feedbacks e agradecimentos de colegas de trabalho",
+            documentTitle: "Reconhecimentos internos | Felipe Gomide"
+          }
+        }[page];
+        document.getElementById("page-eyebrow").textContent = pageContent.eyebrow;
+        document.getElementById("page-title").textContent = pageContent.title;
+        document.getElementById("page-subtitle").textContent = pageContent.subtitle;
+        document.title = pageContent.documentTitle;
+      });
+    });
+    renderJira();
+    makeCategoryMenu();
+    dateFrom.value = INITIAL_FROM;
+    dateTo.value = INITIAL_TO;
+    dateFrom.addEventListener("change", render);
+    dateTo.addEventListener("change", render);
+    document.getElementById("select-all").addEventListener("click", setAllCategories);
+    document.getElementById("reset").addEventListener("click", reset);
+    document.addEventListener("click", event => {
+      const picker = document.getElementById("category-picker");
+      if (!picker.contains(event.target)) picker.open = false;
+    });
+    showDataQuality();
+    render();
+  </script>
+</body>
+</html>
